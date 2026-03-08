@@ -133,11 +133,11 @@
             return div;
         }
 
-        // ===================== TABS =====================
+        
         function switchTab(tab) {
             currentTab = tab;
 
-            // Update tab button styles
+            
             const tabs = { all: 'tabAll', open: 'tabOpen', closed: 'tabClosed' };
             Object.entries(tabs).forEach(([key, id]) => {
                 const btn = document.getElementById(id);
@@ -158,7 +158,7 @@
             renderIssues(filtered);
         }
 
-        // ===================== SEARCH =====================
+        
         const searchInput = document.getElementById('searchInput');
         let searchTimeout;
 
@@ -166,7 +166,7 @@
             clearTimeout(searchTimeout);
             const q = this.value.trim();
             if (q.length === 0) {
-                // Reset to current tab
+                
                 switchTab(currentTab);
                 return;
             }
@@ -191,9 +191,9 @@
             if (q) performSearch(q);
         }
 
-        // ===================== MODAL =====================
+        
         async function openModal(issue) {
-            // Fetch fresh single issue data
+            
             try {
                 const id = issue.id || issue._id;
                 const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`);
@@ -214,7 +214,7 @@
             document.getElementById('modalDate').textContent = issue.createdAt ? new Date(issue.createdAt).toLocaleDateString() : '';
             document.getElementById('modalAssignee').textContent = issue.assignee || issue.author || issue.createdBy || 'Unassigned';
 
-            // createdAt and updatedAt
+            
             document.getElementById('modalCreatedAt').textContent = issue.createdAt
                 ? new Date(issue.createdAt).toLocaleString() : '—';
             document.getElementById('modalUpdatedAt').textContent = issue.updatedAt
@@ -246,12 +246,12 @@
             document.getElementById('issueModal').classList.add('hidden');
         }
 
-        // Close modal on backdrop click
+        
         document.getElementById('issueModal').addEventListener('click', function (e) {
             if (e.target === this) closeModal();
         });
 
-        // ===================== LOADING =====================
+
         function showLoading() {
             document.getElementById('loadingSpinner').classList.remove('hidden');
             document.getElementById('issuesGrid').classList.add('hidden');
