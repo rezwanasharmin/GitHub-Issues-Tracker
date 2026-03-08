@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Issues Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: "Geist", sans-serif;
+        }
+
+   
+    </style>
+</head>
+
+<body>
+
+    <!-- ===================== LOGIN PAGE ===================== -->
+    <div id="loginPage" class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white p-12 rounded-lg shadow-lg w-full max-w-md">
+            <div class="flex flex-col items-center mb-10 text-center">
+                <!-- GitHub logo SVG inline (no external asset needed) -->
+                <img class="w-24 h-24 mb-6" src="./assets/github-logo.png" alt="">
+                <h1 class="text-2xl font-semibold text-gray-900 mb-1">GitHub Issues Tracker</h1>
+                <p class="text-gray-600">Sign in to manage your issues</p>
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter Username"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                    <span class="text-xs text-violet-700 block mt-1">Default: admin</span>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter Password"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                    <span class="text-xs text-violet-700 block mt-1">Default: admin123</span>
+                </div>
+
+                <div id="loginError" class="hidden text-sm text-red-600 text-center font-medium"></div>
+
+                <button onclick="handleLogin()"
+                    class="w-full py-2 px-4 bg-[#4A00FF] text-white font-semibold rounded-md hover:bg-[#380BA6] focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 transition duration-150">
+                    Sign In
+                </button>
+            </div>
+
+            <div class="relative my-8">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-200"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">OR</span>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <p class="text-sm text-gray-500 mb-3">Demo Credentials:</p>
+                <div class="bg-gray-100 p-6 rounded-lg inline-block text-left shadow-inner">
+                    <p class="text-gray-800"><span class="font-semibold">Username:</span> admin</p>
+                    <p class="text-gray-800"><span class="font-semibold">Password:</span> admin123</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================== MAIN PAGE ===================== -->
+    <div id="mainPage" class="bg-gray-50 font-sans hidden">
+
+        <!-- Navbar -->
+        <nav class="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <img class="w-9 h-9" src="./assets/github-logo.png" alt="">
+                <span class="text-xl font-bold text-gray-800">GitHub Issues Tracker</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                        <i class="fas fa-search"></i>
+                    </span>
+                    <input type="text" id="searchInput" placeholder="Search issues..."
+                        class="pl-10 pr-4 py-2 border  border-gray-300 rounded-md w-64 focus:outline-none focus:ring-2 ">
+                </div>
+                <button onclick="handleSearch()"
+                    class="bg-[#101ae999] cursor-pointer text-white px-4 py-2 rounded-md font-semibold hover:bg-[#4c18cf] transition">
+                    + New Issue
+                </button>
+            </div>
+        </nav>
+
+        <div class="max-w-7xl mx-auto px-8 py-10">
+
+            <!-- Tab Section -->
+            <div class="bg-white rounded-lg p-4 shadow-sm border border-gray-100 flex space-x-2 mb-8">
+                <button id="tabAll" onclick="switchTab('all')"
+                    class="bg-[#4A00FF] text-white px-8 py-2 rounded-md font-medium">All</button>
+                <button id="tabOpen" onclick="switchTab('open')"
+                    class="text-gray-500 hover:bg-gray-100 px-8 py-2 rounded-md font-medium border border-gray-200">Open</button>
+                <button id="tabClosed" onclick="switchTab('closed')"
+                    class="text-gray-500 hover:bg-gray-100 px-8 py-2 rounded-md font-medium border border-gray-200">Closed</button>
+            </div>
+
+            <!-- Issue Count Header -->
+            <div class="bg-white rounded-t-xl border-x border-t border-gray-200 p-6 flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center text-violet-600">
+                        <img src="./assets/Aperture.png" alt="">
+                    </div>
+                    <div>
+                        <h2 id="issueCount" class="text-xl font-bold text-gray-900">0 Issues</h2>
+                        <p class="text-sm text-gray-500">Track and manage your project issues</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 bg-emerald-600 rounded-full"></span>
+                        <span class="text-sm font-medium text-gray-700">Open</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 bg-violet-600 rounded-full"></span>
+                        <span class="text-sm font-medium text-gray-700">Closed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner"
+                class="bg-white border border-gray-200 p-12 flex justify-center items-center rounded-b-xl">
+                <div class="spinner"><span class="loading loading-spinner loading-xl"></span></div>
+                
+            </div>
+
+            <!-- Issues Grid -->
+            <div id="issuesGrid"
+                class="bg-white border border-gray-200 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 rounded-b-xl hidden">
+            </div>
+
+            <!-- No Results -->
+            <div id="noResults" class="bg-white border border-gray-200 p-12 rounded-b-xl text-center hidden">
+                <p class="text-gray-400 text-lg">No issues found.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ===================== MODAL ===================== -->
+    <div id="issueModal" class="hidden fixed inset-0 bg-black/50  flex items-center justify-center p-4 ">
+        <div class="max-w-xl w-full bg-white rounded-2xl shadow-xl p-8 font-sans relative">
+
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl">
+                <i class="fas fa-times"></i>
+            </button>
+
+            <div class="mb-4">
+                <h1 id="modalTitle" class="text-3xl font-bold text-slate-800 mb-3"></h1>
+                <div class="flex items-center gap-2 text-sm text-slate-400 flex-wrap">
+                    <span id="modalStatusBadge" class="px-3 py-0.5 rounded-full text-xs font-medium"></span>
+                    <span>•</span>
+                    <span>Opened by <span id="modalAuthor" class="hover:underline cursor-pointer"></span></span>
+                    <span>•</span>
+                    <span id="modalDate"></span>
+                </div>
+            </div>
+
+            <div id="modalLabels" class="flex gap-2 mb-8 flex-wrap"></div>
+
+            <p id="modalDescription" class="text-slate-500 leading-relaxed mb-8"></p>
+
+            <div class="bg-slate-50 rounded-xl p-6 flex justify-between items-center mb-4">
+                <div>
+                    <p class="text-slate-400 text-sm mb-1">Assignee:</p>
+                    <p id="modalAssignee" class="font-bold text-slate-700 text-lg"></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-slate-400 text-sm mb-2">Priority:</p>
+                    <span id="modalPriority" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-tight"></span>
+                </div>
+            </div>
+
+            <!-- createdAt / updatedAt row -->
+            <div class="bg-slate-50 rounded-xl px-6 py-4 flex justify-between items-center mb-6">
+                <div>
+                    <p class="text-slate-400 text-xs mb-0.5">Created At:</p>
+                    <p id="modalCreatedAt" class="text-sm font-medium text-slate-600"></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-slate-400 text-xs mb-0.5">Updated At:</p>
+                    <p id="modalUpdatedAt" class="text-sm font-medium text-slate-600"></p>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="closeModal()"
+                    class="bg-[#5810ff] hover:bg-[#4a0ddb] text-white px-8 py-3 rounded-lg font-bold transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="./script/script.js"></script>
+
+    <!-- <script>
+        // ===================== STATE =====================
+        let allIssues = [];
+        let currentTab = 'all';
+
+        // ===================== LOGIN =====================
+        function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorEl = document.getElementById('loginError');
+
+            if (username === 'admin' && password === 'admin123') {
+                errorEl.classList.add('hidden');
+                document.getElementById('loginPage').classList.add('hidden');
+                document.getElementById('mainPage').classList.remove('hidden');
+                loadIssues();
+            } else {
+                errorEl.textContent = 'Invalid username or password. Use admin / admin123.';
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        // Allow Enter key on login
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !document.getElementById('loginPage').classList.contains('hidden')) {
+                handleLogin();
+            }
+        });
+
+        // ===================== HELPER: extract array from any response shape =====================
+        function extractArray(data) {
+            if (Array.isArray(data)) return data;
+            if (data && Array.isArray(data.issues)) return data.issues;
+            if (data && Array.isArray(data.data)) return data.data;
+            // If it's an object with numeric keys or iterable values, try Object.values
+            if (data && typeof data === 'object') {
+                const vals = Object.values(data);
+                if (vals.length && Array.isArray(vals[0])) return vals[0];
+            }
+            return [];
+        }
+
+        // ===================== FETCH ALL ISSUES =====================
+        async function loadIssues() {
+            showLoading();
+            try {
+                const res = await fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues');
+                const data = await res.json();
+                allIssues = extractArray(data);
+                renderIssues(allIssues);
+            } catch (err) {
+                hideLoading();
+                console.error('Failed to load issues', err);
+            }
+        }
+
+        // ===================== RENDER ISSUES =====================
+        function renderIssues(issues) {
+            hideLoading();
+            const grid = document.getElementById('issuesGrid');
+            const noResults = document.getElementById('noResults');
+
+            document.getElementById('issueCount').textContent = `${issues.length} Issues`;
+
+            if (issues.length === 0) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            grid.classList.remove('hidden');
+            grid.innerHTML = '';
+
+            issues.forEach(issue => {
+                const card = createCard(issue);
+                grid.appendChild(card);
+            });
+        }
+
+        // ===================== CREATE CARD =====================
+        function createCard(issue) {
+            const isOpen = (issue.status || '').toLowerCase() === 'open';
+            const borderColor = isOpen ? 'bg-emerald-400' : 'bg-violet-400';
+
+            const priority = (issue.priority || '').toUpperCase();
+            const priorityColor = priority === 'HIGH'
+                ? 'text-white bg-red-900'
+                : priority === 'MEDIUM'
+                    ? 'text-white bg-orange-600'
+                    : 'text-gray-500 bg-gray-50';
+
+            const labels = issue.labels || issue.tags || [];
+            const labelsHtml = labels.map(label => `
+                <span class="text-[12px] font-bold text-black bg-yellow-500 px-2 py-0.5 rounded border border-red-100 uppercase ">
+                    ${label}
+                </span>
+            `).join('');
+
+            const createdDate = issue.createdAt ? new Date(issue.createdAt).toLocaleDateString() : '';
+            const updatedDate = issue.updatedAt ? new Date(issue.updatedAt).toLocaleDateString() : '';
+
+            const statusImg = isOpen
+                ? `<img src="assets/Open-Status.png" alt="Open" class="w-5 h-5">`
+                : `<img src="assets/Closed- Status .png" alt="Closed" class="w-5 h-5">`;
+
+            const div = document.createElement('div');
+            div.className = 'border border-gray-200 rounded-lg flex flex-col h-full hover:shadow-md transition cursor-pointer';
+            div.innerHTML = `
+                <div class="h-1.5 w-full rounded-t-lg ${borderColor}"></div>
+                <div class="p-4 flex-grow">
+                    <div class="flex justify-between items-start mb-3">
+                        ${statusImg}
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded ${priorityColor}">${priority}</span>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-sm mb-2 leading-tight">${issue.title || ''}</h3>
+                    <p class="text-[11px] text-gray-500 mb-4 line-clamp-2">${issue.description || ''}</p>
+                    <div class="flex flex-wrap gap-1 mb-4">${labelsHtml}</div>
+                </div>
+                <div class="border-t border-gray-100 p-3 bg-gray-50/50 rounded-b-lg space-y-0.5">
+                    <div class="flex justify-between">
+                        <p class="text-[10px] text-gray-400">#${issue.id || issue._id || ''} by ${issue.author || issue.createdBy || ''}</p>
+                        <p class="text-[10px] text-gray-400">${createdDate}</p>
+                    </div>
+                    <div class="flex justify-between">
+                        <p class="text-[10px] text-gray-400">Assignee: ${issue.assignee || 'Unassigned'}</p>
+                        <p class="text-[10px] text-gray-400">Updated: ${updatedDate}</p>
+                    </div>
+                </div>
+            `;
+
+            div.addEventListener('click', () => openModal(issue));
+            return div;
+        }
+
+        // ===================== TABS =====================
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // Update tab button styles
+            const tabs = { all: 'tabAll', open: 'tabOpen', closed: 'tabClosed' };
+            Object.entries(tabs).forEach(([key, id]) => {
+                const btn = document.getElementById(id);
+                if (key === tab) {
+                    btn.className = 'bg-[#4A00FF] text-white px-8 py-2 rounded-md font-medium';
+                } else {
+                    btn.className = 'text-gray-500 hover:bg-gray-100 px-8 py-2 rounded-md font-medium border border-gray-200';
+                }
+            });
+
+            let filtered = allIssues;
+            if (tab === 'open') {
+                filtered = allIssues.filter(i => (i.status || '').toLowerCase() === 'open');
+            } else if (tab === 'closed') {
+                filtered = allIssues.filter(i => (i.status || '').toLowerCase() === 'closed');
+            }
+
+            renderIssues(filtered);
+        }
+
+        // ===================== SEARCH =====================
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimeout);
+            const q = this.value.trim();
+            if (q.length === 0) {
+                // Reset to current tab
+                switchTab(currentTab);
+                return;
+            }
+            searchTimeout = setTimeout(() => performSearch(q), 400);
+        });
+
+        async function performSearch(q) {
+            showLoading();
+            try {
+                const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${encodeURIComponent(q)}`);
+                const data = await res.json();
+                const results = extractArray(data);
+                renderIssues(results);
+            } catch (err) {
+                hideLoading();
+                console.error('Search failed', err);
+            }
+        }
+
+        function handleSearch() {
+            const q = searchInput.value.trim();
+            if (q) performSearch(q);
+        }
+
+        // ===================== MODAL =====================
+        async function openModal(issue) {
+            // Fetch fresh single issue data
+            try {
+                const id = issue.id || issue._id;
+                const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`);
+                const data = await res.json();
+                const fullIssue = data.issue || data.data || data || issue;
+                populateModal(fullIssue);
+            } catch {
+                populateModal(issue);
+            }
+        }
+
+        function populateModal(issue) {
+            const isOpen = (issue.status || '').toLowerCase() === 'open';
+
+            document.getElementById('modalTitle').textContent = issue.title || '';
+            document.getElementById('modalDescription').textContent = issue.description || '';
+            document.getElementById('modalAuthor').textContent = issue.author || issue.createdBy || '';
+            document.getElementById('modalDate').textContent = issue.createdAt ? new Date(issue.createdAt).toLocaleDateString() : '';
+            document.getElementById('modalAssignee').textContent = issue.assignee || issue.author || issue.createdBy || 'Unassigned';
+
+            // createdAt and updatedAt
+            document.getElementById('modalCreatedAt').textContent = issue.createdAt
+                ? new Date(issue.createdAt).toLocaleString() : '—';
+            document.getElementById('modalUpdatedAt').textContent = issue.updatedAt
+                ? new Date(issue.updatedAt).toLocaleString() : '—';
+
+            const statusBadge = document.getElementById('modalStatusBadge');
+            statusBadge.textContent = issue.status || '';
+            statusBadge.className = `px-3 py-0.5 rounded-full text-xs font-medium ${isOpen ? 'bg-emerald-500 text-white' : 'bg-violet-500 text-white'}`;
+
+            const priority = (issue.priority || '').toUpperCase();
+            const priorityEl = document.getElementById('modalPriority');
+            priorityEl.textContent = priority;
+            priorityEl.className = `px-4 py-1.5 rounded-full text-xs font-bold tracking-tight ${priority === 'HIGH' ? 'bg-red-800 text-white' :
+                priority === 'MEDIUM' ? 'bg-orange-600 text-white' :
+                    'bg-gray-300 text-gray-700'
+                }`;
+
+            const labels = issue.labels || issue.tags || [];
+            document.getElementById('modalLabels').innerHTML = labels.map(label => `
+                <span class="flex items-center gap-1 bg-yellow-500 text-black border border-red-100 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">
+                    ${label}
+                </span>
+            `).join('');
+
+            document.getElementById('issueModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('issueModal').classList.add('hidden');
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('issueModal').addEventListener('click', function (e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ===================== LOADING =====================
+        function showLoading() {
+            document.getElementById('loadingSpinner').classList.remove('hidden');
+            document.getElementById('issuesGrid').classList.add('hidden');
+            document.getElementById('noResults').classList.add('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSpinner').classList.add('hidden');
+        }
+    </script> -->
+</body>
+
+</html>
