@@ -1,9 +1,9 @@
     
-        // ===================== STATE =====================
+        
         let allIssues = [];
         let currentTab = 'all';
 
-        // ===================== LOGIN =====================
+
         function handleLogin() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -20,19 +20,19 @@
             }
         }
 
-        // Allow Enter key on login
+        
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !document.getElementById('loginPage').classList.contains('hidden')) {
                 handleLogin();
             }
         });
 
-        // ===================== HELPER: extract array from any response shape =====================
+       
         function extractArray(data) {
             if (Array.isArray(data)) return data;
             if (data && Array.isArray(data.issues)) return data.issues;
             if (data && Array.isArray(data.data)) return data.data;
-            // If it's an object with numeric keys or iterable values, try Object.values
+
             if (data && typeof data === 'object') {
                 const vals = Object.values(data);
                 if (vals.length && Array.isArray(vals[0])) return vals[0];
@@ -40,7 +40,7 @@
             return [];
         }
 
-        // ===================== FETCH ALL ISSUES =====================
+      
         async function loadIssues() {
             showLoading();
             try {
@@ -54,7 +54,7 @@
             }
         }
 
-        // ===================== RENDER ISSUES =====================
+        
         function renderIssues(issues) {
             hideLoading();
             const grid = document.getElementById('issuesGrid');
@@ -78,7 +78,7 @@
             });
         }
 
-        // ===================== CREATE CARD =====================
+        
         function createCard(issue) {
             const isOpen = (issue.status || '').toLowerCase() === 'open';
             const borderColor = isOpen ? 'bg-emerald-400' : 'bg-violet-400';
