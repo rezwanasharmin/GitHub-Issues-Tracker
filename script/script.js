@@ -142,9 +142,9 @@
             Object.entries(tabs).forEach(([key, id]) => {
                 const btn = document.getElementById(id);
                 if (key === tab) {
-                    btn.className = 'bg-[#4A00FF] text-white px-8 py-2 rounded-md font-medium';
+                    btn.className = 'bg-[#4A00FF] text-white px-4 sm:px-8 py-2 rounded-md font-medium';
                 } else {
-                    btn.className = 'text-gray-500 hover:bg-gray-100 px-8 py-2 rounded-md font-medium border border-gray-200';
+                    btn.className = 'text-gray-500 hover:bg-gray-100 px-4 sm:px-8 py-2 rounded-md font-medium border border-gray-200';
                 }
             });
 
